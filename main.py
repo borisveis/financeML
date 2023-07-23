@@ -16,5 +16,8 @@ print("The Column Header :", column_headers)
 column='volume'
 volmin=(df[column].min())
 volmax=(df[column].max())
+volmedian=str((round(df[column].median())))
 print("volmin:"+volmin)
 print("volmax:"+ volmax)
+print("volmedian:"+ volmedian)
+# get range and volume percentile from previous day and find coorelation with proce movement the next day
