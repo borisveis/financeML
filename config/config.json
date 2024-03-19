@@ -3,5 +3,8 @@
 		"host": "localhost",
 		"port": 5432,
 		"key": "LEoEvj3mHfN7wERAQ0LfT3BlbkFJhckSVV06zzYgdpJuWYZn"
+	},
+	"tickers": ["F","SPY","QQQ","AMZN","RHI","GOOG"],
+	"downloadtargetdir": "/Users/borvei01/source/personal/financeML/data/5yr/",
+	"timelength": "5"
 	}
-}
