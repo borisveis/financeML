@@ -1,11 +1,13 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
-app = Flask("financial")
+app = Flask(__name__)
 
-# Define a simple endpoint
+# Define a simple endpoint with input parameter
 @app.route('/hello', methods=['GET'])
 def hello():
-    return jsonify({'message': 'Hello, World!'})
+    # Get the 'name' parameter from the query string
+    name = request.args.get('name', 'World')
+    return jsonify({'message': f'Hello, {name}!'})
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

@@ -32,7 +32,6 @@ django-pipeline
 docutils
 exceptiongroup
 filelock
-flashtex
 flatbuffers
 frozendict
 frozenlist
