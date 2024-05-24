@@ -14,7 +14,7 @@ timelength=int(data["timelength"])
 current_date = datetime.now()
 startdate=current_date-timedelta(days=365*timelength)
 for ticker in tickers:
-    time.sleep((.25))
+    time.sleep((.1))
     print("downloading "+ticker)
     data=yf.download(tickers, startdate, current_date)
     targetfile = targetdir+"tickersdatefile"+".csv"

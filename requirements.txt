@@ -159,3 +159,5 @@ wrapt
 yarl
 yfinance
 zipp
+openpyxl
+xlsxwriter
