@@ -10,3 +10,8 @@ def test_getquote():
 
 def test_get_historical_quote():
     assert client.get_historical_data("GOOG", 10) is not None
+def test_get_historical_datafortickers():
+    tickers=["GOOG","AAPL","SPY","QQQ"]
+
+    data=client.get_historical_datafortickers(tickers,365)
+    print(data.corr())
