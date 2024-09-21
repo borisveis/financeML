@@ -1,3 +1,4 @@
+
 yfinance
 Flask
 absl-py
@@ -161,3 +162,5 @@ yfinance
 zipp
 openpyxl
 xlsxwriter
+torch
+torchvision
