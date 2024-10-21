@@ -11,7 +11,7 @@ def get_historical_data(ticker_symbol,days):
     period = f"{days}d"
     ticker = yf.Ticker(ticker_symbol)
     historical_data = ticker.history(period=period)
-    print(historical_data)
+    # print(historical_data)
     return historical_data
 def get_historical_datafortickers(tickers,days):
     current_date = datetime.now()
