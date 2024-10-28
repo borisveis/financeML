@@ -17,3 +17,7 @@ def test_progess():
     GGOG5days=client.get_historical_data("GOOG",5)
     AAPL5days=client.get_historical_data("AAPL",5)
     SPY5days=client.get_historical_data("SPY",5)
+
+
+
+
