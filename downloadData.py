@@ -3,7 +3,7 @@ import time
 import yfinance as yf
 from datetime import datetime, timedelta
 import json
-configfilepath="config/config.json"
+configfilepath='../secrets/financeML/config.json'
 with open(configfilepath, 'r') as f:
     data = json.load(f)
 tickers =data["tickers"]

@@ -1,6 +1,7 @@
 from math import log10, floor
 import numpy as np
 import pandas as pd
+import yfinance
 
 #import yfinance as yf
 

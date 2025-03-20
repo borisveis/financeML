@@ -47,7 +47,6 @@ html5lib
 idna
 importlib-metadata
 iniconfig
-install
 Jinja2
 jmespath
 joblib
