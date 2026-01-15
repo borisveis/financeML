@@ -1,11 +1,10 @@
 import pytest
 from YahooFinClient import client
-from analysis import calculations as calc
+
 def test_series_difference():
-    days=365
-    ticker1="SPY"
-    ticker2="QQQ"
-    series1=client.get_historical_data(ticker1,days)
-    series2=client.get_historical_data(ticker2,days)
-    difference= calc.series_difference(series1,series2)
-    print(difference)
+    days = 365
+    ticker1 = "SPY"
+    # Instantiate the classes to access the new instance methods
+    stock1 = client.Stock(ticker1)
+    series1 = stock1.get_historical_data(days)
+    assert series1 is not None

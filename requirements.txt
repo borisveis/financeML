@@ -1,26 +1,18 @@
-yfinance
-matplotlib
-Flask
-absl-py
-aiohttp
-aiosignal
-annotated-types
-anyio
-appdirs
-astunparse
-async-timeout
-attrs
-beautifulsoup4
-blis
-boto3
-botocore
-cachetools
-catalogue
-certifi
-cffi
-charset-normalizer
-click
-cloudpathlib
-cmake
-colorlog
-confection
+# --- Core Financial Data & Scraping ---
+yfinance>=0.2.54      # Required for current Yahoo Finance API authentication
+requests>=2.32.3      # For browser-like headers to avoid rate limits
+pandas>=2.2.3         # For processing historical price data
+numpy>=2.1.0          # Linear algebra support for ML logic
+
+# --- Machine Learning & Analysis ---
+scikit-learn>=1.5.0   # For the LinearRegression and MSE/R2 evaluations
+matplotlib>=3.9.0      # For generating stock movement plots
+
+# --- AWS & Agentic Memory ---
+boto3>=1.35.0         # To connect your agent to the DynamoDB memory table
+
+# --- Testing & Environment ---
+pytest>=8.3.0         # Python 3.13 compatible unit testing
+python-dotenv>=1.0.1  # For managing local credentials safely
+openpyxl>=3.1.5       # Required for Excel file management
+pandas>=2.2.3         # (Already there, but essential for Excel support)
