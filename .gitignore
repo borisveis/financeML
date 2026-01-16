@@ -151,6 +151,16 @@ cython_debug/
 
 .idea/
 .DS_Store
+#Terraform
+.terraform/
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+*.tfvars
+*.tfvars.json
+terraform.tfplan
+
 infrastructure/.terraform/providers/registry.terraform.io/hashicorp/aws/5.49.0/darwin_arm64/terraform-provider-aws_v5.49.0_x5
 */*/.terraform
 */.terraform.lock.hcl
