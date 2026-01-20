@@ -36,35 +36,4 @@ def plot_results(X_test, y_test, y_pred):
 
     # Scatter Plot: Actual vs Predicted
     plt.subplot(1, 2, 1)
-    plt.scatter(y_test, y_pred, color="red", alpha=0.5, label="Predicted vs Actual")
-    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2)  # 45-degree line
-    plt.xlabel("Actual SPY Prices")
-    plt.ylabel("Predicted SPY Prices")
-    plt.title("Scatter: Actual vs Predicted SPY Prices")
-    plt.legend()
-
-    # Time Series Plot
-    plt.subplot(1, 2, 2)
-    sorted_indices = np.argsort(X_test.values.flatten())  # Sort for proper visualization
-    plt.plot(X_test.iloc[sorted_indices], y_test.iloc[sorted_indices], label="Actual SPY", color="blue")
-    plt.plot(X_test.iloc[sorted_indices], np.array(y_pred)[sorted_indices], label="Predicted SPY", color="red", linestyle="dashed")
-    plt.xlabel("AAPL Prices")
-    plt.ylabel("SPY Prices")
-    plt.title("Time Series: Actual vs Predicted SPY Prices")
-    plt.legend()
-
-    plt.tight_layout()
-    plt.show(block=True)  # Keep the plot open
-
-# Run the script
-data = fetch_data()
-X = data[["AAPL"]]
-y = data["SPY"]
-
-model, X_test, y_test = train_model(X, y)
-mse, r2, y_pred = evaluate_model(model, X_test, y_test)
-
-print(f"Mean Squared Error: {mse:.4f}")
-print(f"R-squared: {r2:.4f}")
-
-plot_results(X_test, y_test, y_pred)
+    plt.scatter(y_test, y_pred, color="red", alpha=0.5, label="Predicted
