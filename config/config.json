@@ -1,6 +1,9 @@
 {
-    "prediction_settings": {
-    "target_ticker": "SPY",
-    "feature_tickers": ["AAPL", "GOOGL", "MSFT", "AMZN","AGNC","^TNX"]
+  "openai": {
+    "key": "your-openai-api-key-here"
+  },
+  "prediction_settings": {
+    "target_ticker": "AGNC",
+    "feature_tickers": ["^TNX","NLY","^MOVE","REM"]
   }
 }
