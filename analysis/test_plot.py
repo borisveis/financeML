@@ -12,4 +12,6 @@ plt.title("Sine Wave Plot")
 plt.legend()
 
 # Ensure the plot stays open
-plt.show(block=True)
+plt.show(block=False)
+plt.pause(1)
+plt.close()
