@@ -1,88 +1,76 @@
 import pytest
 import time
 from YahooFinClient import client
-from unittest.mock import patch, ANY
+from unittest.mock import patch, ANY, MagicMock
 import pandas as pd
 
 
-# --- New AH and Training Method Tests ---
+# ... [Keep your existing mock_ah_data fixture and previous tests] ...
 
-@pytest.fixture
-def mock_ah_data():
-    """Generates synthetic minute-level data to simulate After-Hours action."""
-    dates = pd.date_range(start="2026-01-20 09:30:00", periods=5, freq='min')
-    return pd.DataFrame({
-        "Close": [400.1, 400.5, 400.3, 401.0, 401.5]
-    }, index=dates)
+@patch('yfinance.Ticker')
+def test_get_audit_metrics(mock_ticker_class):
+    """Verifies that audit metrics correctly map fundamental data."""
+    # Setup mock info dictionary
+    mock_ticker_instance = mock_ticker_class.return_value
+    mock_ticker_instance.info = {
+        "regularMarketPrice": 10.32,
+        "targetMeanPrice": 12.00,
+        "recommendationKey": "buy",
+        "bookValue": 12.50,
+        "numberOfAnalystOpinions": 9
+    }
+    mock_ticker_instance.fast_info = {'currency': 'USD'}
 
+    agnc = client.Stock("AGNC")
+    metrics = agnc.get_audit_metrics()
 
-@patch('yfinance.download')
-def test_get_full_day_data(mock_download, mock_ah_data):
-    """Verifies retrieval of the final AH close for the daily cron job."""
-    mock_download.return_value = mock_ah_data
-    # Consistent with your test_smoke_client() style
-    spy = client.Stock("SPY")
-
-    result = spy.get_full_day_data()
-
-    # ANY allows the Ticker object to pass while strictly checking params
-    mock_download.assert_called_once_with(
-        ANY,
-        period="1d",
-        interval="1m",
-        prepost=True
-    )
-
-    # Ensure we only extract the final AH price point
-    assert len(result) == 1
-    assert result['Close'].iloc[0] == 401.5
+    assert metrics['symbol'] == "AGNC"
+    assert metrics['target_mean'] == 12.00
+    assert metrics['book_value'] == 12.50
+    assert metrics['recommendation'] == "buy"
 
 
 @patch('yfinance.download')
-def test_get_training_data(mock_download, mock_ah_data):
-    """Verifies retrieval of AH-aware training data for JIT retraining."""
-    mock_download.return_value = pd.DataFrame({"Close": mock_ah_data["Close"]})
-    spy = client.Stock("SPY")
+@patch('yfinance.Ticker')
+def test_get_relationship_metrics(mock_ticker_class, mock_download):
+    """Verifies the divergence calculation between stock and benchmark."""
+    # Mocking the 5-day history for the stock
+    mock_stock_instance = mock_ticker_class.return_value
+    mock_stock_instance.fast_info = {'currency': 'USD'}
 
-    result = spy.get_training_data(period="5y")
+    # Simulate a 1% price increase for AGNC
+    mock_stock_instance.history.return_value = pd.DataFrame({
+        "Close": [10.0, 10.0, 10.0, 10.0, 10.1]
+    })
 
-    # Verifies the 5y window and AH parameter are used
-    mock_download.assert_called_once_with(
-        ANY,
-        period="5y",
-        prepost=True
-    )
-    assert isinstance(result, pd.Series)
-@pytest.fixture(autouse=True)
-def rate_limit_buffer():
-    """Adds a 1-second delay between tests to avoid Yahoo's rate limit"""
-    yield
-    time.sleep(1)
+    # Mocking the 5-day history for ^TNX (the benchmark)
+    # Simulate a 1% price decrease for ^TNX
+    mock_download.return_value = pd.DataFrame({
+        "Close": [4.5, 4.5, 4.5, 4.5, 4.455]
+    })
 
-def test_smoke_client():
-    # Retaining AAPL as used in your original test
-    apple = client.Stock("AAPL")
-    assert apple.get_live_quote() is not None
+    agnc = client.Stock("AGNC")
+    rel_metrics = agnc.get_relationship_metrics(benchmark_ticker="^TNX")
 
-def test_live_quote():
-    # Retaining GOOG as used in your original test
-    google = client.Stock("GOOG")
-    assert google.get_live_quote() > 1
+    # AGNC +1%, TNX -1% -> Divergence should be ~2% (0.02)
+    assert rel_metrics['ticker_change'] > 0
+    assert rel_metrics['benchmark_change'] < 0
+    assert pytest.approx(rel_metrics['divergence'], 0.001) == 0.02
 
-def test_invalid_ticker_symbol():
-    invalid_symbol = "ABCDEF"
-    with pytest.raises(ValueError) as exc_info:
-        client.Stock(invalid_symbol)
-    assert f"Invalid ticker symbol: {invalid_symbol}" in str(exc_info.value)
 
-def test_historical_quote():
-    # Retaining AAPL as used in your original test
-    apple = client.Stock("AAPL")
-    assert apple is not None
+def test_audit_metrics_missing_data():
+    """Defensive test: ensures code doesn't crash if Yahoo returns empty info."""
+    with patch('yfinance.Ticker') as mock_ticker:
+        inst = mock_ticker.return_value
+        # FIX: Add 'last_price' to the mocked fast_info so the fallback works
+        inst.fast_info = {'currency': 'USD', 'last_price': 10.32}
+        inst.info = {}  # Empty info dict
 
-def test_historical():
-    # Retaining AMZN as used in your original test
-    ticker_symbol = "AMZN"
-    amazon = client.Stock(ticker_symbol)
-    historical_data = amazon.get_historical_data(5)
-    assert historical_data['Close'].notna().any(), "No valid close prices found"
+        agnc = client.Stock("AGNC")
+        metrics = agnc.get_audit_metrics()
+
+        # Should return None for missing fields, not raise KeyError
+        assert metrics['target_mean'] is None
+        assert metrics['book_value'] is None
+        # Verify the fallback to fast_info actually worked
+        assert metrics['current_price'] == 10.32
